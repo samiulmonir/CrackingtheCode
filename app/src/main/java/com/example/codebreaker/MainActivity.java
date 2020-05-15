@@ -1,5 +1,6 @@
 package com.example.codebreaker;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -24,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     final String generatedCode = String.valueOf(randomLeft+""+randomCenter+""+randomRight);
 
     Queue<String> queue = new LinkedList<>();
+    int countPositions = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,8 +109,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String builder = leftButton.getTag()+""+centerButton.getTag()+rightButton.getTag();
+
+                TextView txtView = (TextView) findViewById(R.id.positions);
+                txtView.setVisibility(View.VISIBLE);
+
                 if(builder.equals(generatedCode)) {
                     System.out.println("WOW, Good Job");
+                    txtView.setText("Correct Positions: 3");
+
                 }
                 else {
                     int positions = 0;
@@ -117,12 +126,34 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                     System.out.println("matched in positions: "+positions);
-                    TextView txtView = (TextView) findViewById(R.id.positions);
                     txtView.setText("Correct Positions: "+positions);
-                    txtView.setVisibility(View.VISIBLE);
                 }
             }
         });
+
+        final Button hintButton = (Button) findViewById(R.id.hintsButton);
+
+        hintButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CharSequence text;
+                switch (countPositions) {
+                    case 0:
+                        text = "Position 1: "+leftButton.getTag().toString();
+                        break;
+                    case 1:
+                        text = "Position 2: "+centerButton.getTag().toString();
+                        break;
+                    default:
+                        text = "Position 3: "+rightButton.getTag().toString();
+                        break;
+                }
+                Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+                countPositions++;
+            }
+        });
+
+
 
     }
 
